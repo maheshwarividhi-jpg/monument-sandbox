@@ -2,72 +2,60 @@
 import { motion } from "framer-motion";
 
 export default function MonumentSandbox() {
-  // Reliable high-contrast stock videos for blending
-  const immersiveVideos = [
-    "https://cdn.pixabay.com/video/2021/09/01/87103-595393047_tiny.mp4", // Abstract Light
-    "https://cdn.pixabay.com/video/2023/10/24/186358-877943566_tiny.mp4", // Fluid Smoke
-    "https://cdn.pixabay.com/video/2022/09/14/131346-750051101_tiny.mp4", // Digital Waves
-  ];
+  const visuals = {
+    waves: "https://cdn.pixabay.com/video/2021/09/01/87103-595393047_tiny.mp4",
+    stars: "https://cdn.pixabay.com/video/2023/10/24/186358-877943566_tiny.mp4",
+    bubbles: "https://cdn.pixabay.com/video/2021/04/12/70860-537443187_tiny.mp4"
+  };
 
   return (
-    <main className="bg-black text-white selection:bg-blue-500 overflow-x-hidden font-serif">
+    <main className="bg-black text-white min-h-screen overflow-x-hidden selection:bg-white/20">
       
-      {/* 1. HERO SECTION: Floating Title */}
-      <section className="relative h-screen flex items-center justify-center">
-        <div className="absolute inset-0 z-0 opacity-50">
-          <video 
-            src={immersiveVideos[0]} 
-            autoPlay loop muted playsInline 
-            className="w-full h-full object-cover mix-blend-screen scale-110"
-          />
-        </div>
+      {/* BACKGROUND 1: THE ETHER (Space Stars) */}
+      <div className="fixed inset-0 z-0 opacity-40 pointer-events-none">
+        <video src={visuals.stars} autoPlay loop muted playsInline className="w-full h-full object-cover mix-blend-screen" />
+      </div>
+
+      {/* HERO SECTION: THE MONUMENT */}
+      <section className="relative h-screen flex flex-col items-center justify-center z-10">
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2 }}
-          className="relative z-10 text-[14vw] italic tracking-tighter mix-blend-difference"
+          transition={{ duration: 2.5, ease: "circOut" }}
+          className="text-[12vw] font-serif italic tracking-tighter mix-blend-difference"
         >
           Monument
         </motion.h1>
+        <p className="text-[10px] tracking-[1.5em] uppercase opacity-40 mt-6">Subconscious Explorations</p>
       </section>
 
-      {/* 2. IMMERSIVE CONTENT: No Boxes */}
-      <div className="space-y-[30vh] py-32">
-        {immersiveVideos.map((url, i) => (
-          <section key={i} className="relative h-screen flex flex-col items-center justify-center px-10">
-            {/* The Floating Video Asset */}
-            <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: false }}
-                className="w-full max-w-5xl h-full"
-              >
-                <video 
-                  src={url} 
-                  autoPlay loop muted playsInline 
-                  className="w-full h-full object-contain mix-blend-lighten grayscale" 
-                />
-              </motion.div>
-            </div>
+      {/* SECTION 2: THE WAVES */}
+      <section className="relative h-[150vh] flex items-center justify-center px-10">
+        <div className="absolute inset-0 z-0 opacity-60">
+           <video src={visuals.waves} autoPlay loop muted playsInline className="w-full h-full object-contain mix-blend-lighten" />
+        </div>
+        <div className="relative z-10 max-w-2xl text-center">
+          <h2 className="text-6xl font-serif italic mb-6">Celestial Motion</h2>
+          <div className="w-24 h-[1px] bg-white/20 mx-auto mb-8" />
+          <p className="text-sm font-light leading-relaxed text-white/50 tracking-wide">
+            A study in fluid dynamics and the weight of digital silence.
+          </p>
+        </div>
+      </section>
 
-            {/* The Floating Text */}
-            <div className="relative z-10 text-center">
-              <h2 className="text-7xl italic mb-4">Phase 0{i+1}</h2>
-              <p className="text-[10px] tracking-[1.5em] uppercase opacity-30 font-sans">
-                Sensory Sequence
-              </p>
-            </div>
-          </section>
-        ))}
-      </div>
+      {/* SECTION 3: THE BUBBLES (ASMR POP) */}
+      <section className="relative h-screen flex items-center justify-center">
+        <div className="absolute inset-0 z-0 opacity-50">
+           <video src={visuals.bubbles} autoPlay loop muted playsInline className="w-full h-full object-cover mix-blend-screen grayscale" />
+        </div>
+        <div className="relative z-10 text-center">
+          <h2 className="text-7xl font-serif italic">Ephemeral</h2>
+          <p className="text-[9px] tracking-[1.2em] uppercase opacity-20 mt-4">Breaking the Surface</p>
+        </div>
+      </section>
 
-      {/* 3. COHESIVE GRAIN FILTER */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.04] z-[100] bg-[url('https://media.giphy.com/media/oEI9uWU93A6Npx30rK/giphy.gif')]" />
-
-      <footer className="h-screen flex items-center justify-center opacity-10">
-        <p className="tracking-[2em] uppercase text-[9px] font-sans">End Sandbox</p>
-      </footer>
+      {/* FILM GRAIN OVERLAY */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[100] bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Static_Noise.gif')]" />
     </main>
   );
 }
