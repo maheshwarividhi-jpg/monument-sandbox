@@ -3,149 +3,109 @@ import React, { useEffect, useRef } from 'react';
 
 export default function MonumentSandbox() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const cursorCanvasRef = useRef<HTMLCanvasElement>(null);
+  const fluidCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const sections = [
-    { title: "Resonance", video: "/videos/s1.mp4", align: 'flex-start', shift: '10vw' },
-    { title: "Fluidity", video: "/videos/s2.mp4", align: 'flex-end', shift: '-10vw' },
-    { title: "Stillness", video: "/videos/s3.mp4", align: 'flex-start', shift: '5vw' },
-    { title: "Refraction", video: "/videos/s4.mp4", align: 'flex-end', shift: '-5vw' },
-    { title: "Ethereal", video: "/videos/s5.mp4", align: 'center', shift: '0' },
+    { title: "Resonance", video: "/videos/s1.mp4", align: 'flex-start', x: '10%' },
+    { title: "Fluidity", video: "/videos/s2.mp4", align: 'flex-end', x: '-10%' },
+    { title: "Stillness", video: "/videos/s3.mp4", align: 'flex-start', x: '5%' },
+    { title: "Refraction", video: "/videos/s4.mp4", align: 'flex-end', x: '-5%' },
+    { title: "Ethereal", video: "/videos/s5.mp4", align: 'center', x: '0' },
   ];
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const cursorCanvas = cursorCanvasRef.current;
-    if (!canvas || !cursorCanvas) return;
+    const fCanvas = fluidCanvasRef.current;
+    if (!canvas || !fCanvas) return;
     const ctx = canvas.getContext('2d');
-    const cCtx = cursorCanvas.getContext('2d');
-    if (!ctx || !cCtx) return;
+    const fCtx = fCanvas.getContext('2d');
+    if (!ctx || !fCtx) return;
 
-    let time = 0;
-    let mouse = { x: 0, y: 0 };
     let particles: any[] = [];
+    let time = 0;
 
     const resize = () => {
-      canvas.width = cursorCanvas.width = window.innerWidth;
-      canvas.height = cursorCanvas.height = window.innerHeight;
+      canvas.width = fCanvas.width = window.innerWidth;
+      canvas.height = fCanvas.height = window.innerHeight;
     };
 
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      // Spawn stardust on move
-      for(let i=0; i<3; i++) {
+    const handleInput = (x: number, y: number) => {
+      for (let i = 0; i < 5; i++) {
         particles.push({
-          x: mouse.x,
-          y: mouse.y,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2,
-          life: 1.0
+          x, y,
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
+          life: 1.0,
+          color: Math.random() > 0.5 ? '#ff00ff' : '#00ffff'
         });
       }
-    });
+    };
+
+    // Touch and Mouse listeners
+    window.addEventListener('mousemove', (e) => handleInput(e.clientX, e.clientY));
+    window.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      handleInput(touch.clientX, touch.clientY);
+    }, { passive: false });
 
     const animate = () => {
-      time += 0.005;
+      time += 0.01;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      cCtx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+      fCtx.clearRect(0, 0, fCanvas.width, fCanvas.height);
 
-      // 1. Particle Terrain (Background)
-      ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
-      for (let i = 0; i < 50; i++) {
-        for (let j = 0; j < 20; j++) {
-          const x = i * (canvas.width / 50);
-          const yBase = canvas.height * 0.75;
-          const wave = Math.sin(i * 0.2 + time) * Math.cos(j * 0.1 + time) * 30;
-          ctx.beginPath();
-          ctx.arc(x, yBase + (j * 15) + wave, 0.7, 0, Math.PI * 2);
-          ctx.fill();
+      // 1. Background Metallic/Neon Ripple Waves
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height * 0.5 + i * 20);
+        for (let x = 0; x < canvas.width; x += 20) {
+          const y = (canvas.height * 0.5) + Math.sin(x * 0.005 + time + i) * 50;
+          ctx.lineTo(x, y);
         }
+        ctx.stroke();
       }
 
-      // 2. Cursor Sparkle Wave
+      // 2. Mobile Touch Stardust
       particles = particles.filter(p => p.life > 0);
       particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 0.015;
-        cCtx.fillStyle = `rgba(255, 255, 255, ${p.life * 0.5})`;
-        cCtx.beginPath();
-        cCtx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-        cCtx.fill();
+        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+        fCtx.fillStyle = p.color;
+        fCtx.globalAlpha = p.life;
+        fCtx.beginPath(); fCtx.arc(p.x, p.y, 2, 0, Math.PI * 2); fCtx.fill();
       });
 
       requestAnimationFrame(animate);
     };
 
     window.addEventListener('resize', resize);
-    resize();
-    animate();
+    resize(); animate();
     return () => window.removeEventListener('resize', resize);
   }, []);
 
   return (
-    <main style={{ backgroundColor: 'black', color: 'white', minHeight: '100vh', overflowX: 'hidden', fontFamily: 'serif', cursor: 'none' }}>
+    <main style={{ backgroundColor: 'black', color: 'white', minHeight: '100vh', overflowX: 'hidden', fontFamily: 'serif' }}>
       
-      {/* BACKGROUND ELEMENTS */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
         {/* Metallic Ribbon Gradient */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(135deg, #000 0%, #0c0c10 40%, #1a1a25 60%, #000 100%)',
-          backgroundSize: '400% 400%',
-          animation: 'ribbonBreath 30s ease-in-out infinite',
-          opacity: 0.8
-        }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #000, #0a0a0c, #000)', opacity: 0.8 }} />
         <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, opacity: 0.4 }} />
-        <canvas ref={cursorCanvasRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 100 }} />
+        <canvas ref={fluidCanvasRef} style={{ position: 'absolute', inset: 0, zIndex: 50, pointerEvents: 'none' }} />
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes ribbonBreath {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        @keyframes drift {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 0.8; }
-        }
-      `}} />
-
-      {/* HERO */}
-      <section style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 10 }}>
-        <h1 style={{ fontSize: '11vw', fontStyle: 'italic', mixBlendMode: 'difference', opacity: 0.9 }}>Monument</h1>
-      </section>
-
-      {/* STAGGERED FLUID CONTENT */}
-      <div style={{ position: 'relative', zIndex: 5, padding: '0 12vw' }}>
+      <div style={{ position: 'relative', zIndex: 10, padding: '0 5vw' }}>
+        <h1 style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12vw', fontStyle: 'italic', mixBlendMode: 'difference' }}>
+          Monument
+        </h1>
+        
         {sections.map((s, i) => (
-          <section key={i} style={{ 
-            minHeight: '130vh', 
-            display: 'flex', 
-            flexDirection: 'column',
-            alignItems: s.align, 
-            justifyContent: 'center',
-            transform: `translateX(${s.shift})`,
-            marginBottom: '15vh',
-            animation: 'drift 2s ease-out forwards'
-          }}>
-            <div style={{ width: '100%', maxWidth: '650px', textAlign: 'center' }}>
-              <video 
-                src={s.video} 
-                autoPlay loop muted playsInline 
-                style={{ width: '100%', mixBlendMode: 'screen', opacity: 0.85, filter: 'contrast(1.1) brightness(1.1)' }} 
-              />
-              <h2 style={{ fontSize: '3.5rem', fontStyle: 'italic', marginTop: '30px', opacity: 0.5, fontWeight: 'normal' }}>{s.title}</h2>
+          <section key={i} style={{ minHeight: '130vh', display: 'flex', justifyContent: s.align, alignItems: 'center', transform: `translateX(${s.x})` }}>
+            <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center' }}>
+              <video src={s.video} autoPlay loop muted playsInline style={{ width: '100%', mixBlendMode: 'screen', opacity: 0.9 }} />
+              <h2 style={{ fontSize: '3.5rem', fontStyle: 'italic', marginTop: '20px', opacity: 0.6 }}>{s.title}</h2>
             </div>
           </section>
         ))}
       </div>
-
-      {/* FILM GRAIN */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', opacity: 0.04, zIndex: 101, background: "url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Static_Noise.gif')" }} />
     </main>
   );
 }
