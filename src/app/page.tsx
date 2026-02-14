@@ -1,61 +1,161 @@
-"use client";
-import { motion } from "framer-motion";
-
 export default function MonumentSandbox() {
-  const visuals = {
-    waves: "https://cdn.pixabay.com/video/2021/09/01/87103-595393047_tiny.mp4",
-    stars: "https://cdn.pixabay.com/video/2023/10/24/186358-877943566_tiny.mp4",
-    bubbles: "https://cdn.pixabay.com/video/2021/04/12/70860-537443187_tiny.mp4"
-  };
+  const sections = [
+    { title: "Resonance", video: "/videos/s1.mp4" },
+    { title: "Fluidity", video: "/videos/s2.mp4" },
+    { title: "Stillness", video: "/videos/s3.mp4" },
+    { title: "Refraction", video: "/videos/s4.mp4" },
+    { title: "Ethereal", video: "/videos/s5.mp4" },
+  ];
 
   return (
-    <main className="bg-black text-white min-h-screen overflow-x-hidden selection:bg-white/20">
+    <main style={{ 
+      backgroundColor: 'black', 
+      color: 'white', 
+      minHeight: '100vh', 
+      overflowX: 'hidden', 
+      fontFamily: 'serif' 
+    }}>
       
-      {/* BACKGROUND 1: THE ETHER (Space Stars) */}
-      <div className="fixed inset-0 z-0 opacity-40 pointer-events-none">
-        <video src={visuals.stars} autoPlay loop muted playsInline className="w-full h-full object-cover mix-blend-screen" />
+      {/* 1. ANIMATED ABSTRACT WAVE BACKGROUND (Vanilla Moon Style) */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+        opacity: 0.5,
+        background: 'linear-gradient(125deg, #000000 0%, #08080a 40%, #111118 60%, #000000 100%)',
+        backgroundSize: '400% 400%',
+        animation: 'gradientMove 18s ease infinite',
+      }} />
+
+      {/* 2. SPARKLE / STARDUST LAYER */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1,
+        backgroundImage: `url('https://www.transparenttextures.com/patterns/stardust.png')`,
+        opacity: 0.15,
+        pointerEvents: 'none'
+      }} />
+
+      <style jsx global>{`
+        @keyframes gradientMove {
+          0% { background-position: 0% 50% }
+          50% { background-position: 100% 50% }
+          100% { background-position: 0% 50% }
+        }
+        video::-webkit-media-controls {
+          display: none !important;
+        }
+      `}</style>
+
+      {/* 3. HERO SECTION */}
+      <section style={{ 
+        position: 'relative', 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        zIndex: 10 
+      }}>
+        <h1 style={{ 
+          fontSize: '14vw', 
+          fontStyle: 'italic', 
+          letterSpacing: '-0.05em', 
+          margin: 0, 
+          mixBlendMode: 'difference',
+          fontWeight: 'normal'
+        }}>
+          Monument
+        </h1>
+        <p style={{ 
+          fontSize: '10px', 
+          letterSpacing: '1.4em', 
+          textTransform: 'uppercase', 
+          opacity: 0.4, 
+          marginTop: '24px', 
+          textAlign: 'center',
+          fontFamily: 'sans-serif'
+        }}>
+          Sandbox Explorations
+        </p>
+      </section>
+
+      {/* 4. IMMERSIVE VIDEO FEED (s1-s5) */}
+      <div style={{ position: 'relative', zIndex: 5 }}>
+        {sections.map((s, i) => (
+          <section key={i} style={{ 
+            height: '140vh', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: '0 20px' 
+          }}>
+            
+            {/* The Video: Floating with Screen Blend (No Box) */}
+            <div style={{ 
+              width: '100%', 
+              maxWidth: '900px', 
+              marginBottom: '60px',
+              filter: 'drop-shadow(0 0 30px rgba(255,255,255,0.05))'
+            }}>
+              <video 
+                src={s.video} 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'contain', 
+                  mixBlendMode: 'screen', 
+                  filter: 'contrast(1.1) brightness(1.2)' 
+                }} 
+              />
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <h2 style={{ fontSize: '5rem', fontStyle: 'italic', margin: 0, opacity: 0.9 }}>
+                {s.title}
+              </h2>
+              <p style={{ 
+                fontSize: '9px', 
+                letterSpacing: '0.8em', 
+                textTransform: 'uppercase', 
+                opacity: 0.3, 
+                marginTop: '15px',
+                fontFamily: 'sans-serif'
+              }}>
+                Motion Study 0{i+1}
+              </p>
+            </div>
+          </section>
+        ))}
       </div>
 
-      {/* HERO SECTION: THE MONUMENT */}
-      <section className="relative h-screen flex flex-col items-center justify-center z-10">
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2.5, ease: "circOut" }}
-          className="text-[12vw] font-serif italic tracking-tighter mix-blend-difference"
-        >
-          Monument
-        </motion.h1>
-        <p className="text-[10px] tracking-[1.5em] uppercase opacity-40 mt-6">Subconscious Explorations</p>
-      </section>
+      {/* 5. FILM GRAIN OVERLAY */}
+      <div style={{ 
+        position: 'fixed', 
+        inset: 0, 
+        pointerEvents: 'none', 
+        opacity: 0.04, 
+        zIndex: 100, 
+        background: "url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Static_Noise.gif')" 
+      }} />
 
-      {/* SECTION 2: THE WAVES */}
-      <section className="relative h-[150vh] flex items-center justify-center px-10">
-        <div className="absolute inset-0 z-0 opacity-60">
-           <video src={visuals.waves} autoPlay loop muted playsInline className="w-full h-full object-contain mix-blend-lighten" />
-        </div>
-        <div className="relative z-10 max-w-2xl text-center">
-          <h2 className="text-6xl font-serif italic mb-6">Celestial Motion</h2>
-          <div className="w-24 h-[1px] bg-white/20 mx-auto mb-8" />
-          <p className="text-sm font-light leading-relaxed text-white/50 tracking-wide">
-            A study in fluid dynamics and the weight of digital silence.
-          </p>
-        </div>
-      </section>
-
-      {/* SECTION 3: THE BUBBLES (ASMR POP) */}
-      <section className="relative h-screen flex items-center justify-center">
-        <div className="absolute inset-0 z-0 opacity-50">
-           <video src={visuals.bubbles} autoPlay loop muted playsInline className="w-full h-full object-cover mix-blend-screen grayscale" />
-        </div>
-        <div className="relative z-10 text-center">
-          <h2 className="text-7xl font-serif italic">Ephemeral</h2>
-          <p className="text-[9px] tracking-[1.2em] uppercase opacity-20 mt-4">Breaking the Surface</p>
-        </div>
-      </section>
-
-      {/* FILM GRAIN OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[100] bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Static_Noise.gif')]" />
+      <footer style={{ 
+        height: '60vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        opacity: 0.1 
+      }}>
+        <p style={{ letterSpacing: '2.5em', textTransform: 'uppercase', fontSize: '8px' }}>
+          End Sandbox
+        </p>
+      </footer>
     </main>
   );
 }
