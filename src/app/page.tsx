@@ -2,88 +2,65 @@
 import { motion } from "framer-motion";
 
 export default function MonumentSandbox() {
-  const sections = [
-    { title: "Resonance", subtitle: "01", video: "/videos/s1.mp4" },
-    { title: "Fluidity", subtitle: "02", video: "/videos/s2.mp4" },
-    { title: "Stillness", subtitle: "03", video: "/videos/s3.mp4" },
-    { title: "Texture", subtitle: "04", video: "/videos/s4.mp4" },
-    { title: "Ethereal", subtitle: "05", video: "/videos/s5.mp4" },
+  const stockVideos = [
+    "https://assets.mixkit.co/videos/preview/mixkit-abstract-flowing-teal-and-pink-ink-2402-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-slow-motion-of-a-colorful-ink-drop-in-water-3401-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-dust-particles-flying-in-the-air-1153-large.mp4"
   ];
 
   return (
-    <main className="bg-[#080808] text-white selection:bg-white selection:text-black font-sans">
+    <main className="bg-black text-white min-h-[300vh] selection:bg-blue-500 overflow-x-hidden">
       
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-30">
-           <video 
-             src="/videos/s1.mp4" 
-             autoPlay loop muted playsInline preload="metadata"
-             className="w-full h-full object-cover" 
-           />
-        </div>
+      {/* 1. THE FLOATING HERO */}
+      <section className="h-screen flex flex-col items-center justify-center sticky top-0">
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 3 }}
+          className="absolute inset-0 z-0 pointer-events-none"
+        >
+          <video 
+            src={stockVideos[0]} 
+            autoPlay loop muted playsInline 
+            className="w-full h-full object-cover mix-blend-screen opacity-60" 
+          />
+        </motion.div>
         
-        <div className="relative z-10 text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 2, ease: "easeOut" }}
-            className="text-[14vw] font-serif italic tracking-tighter leading-none"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
-            Monument
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            transition={{ delay: 1, duration: 2 }}
-            className="text-[10px] tracking-[1.2em] uppercase mt-4"
-          >
-            Sandbox • Vol. 01
-          </motion.p>
-        </div>
+        <h1 className="relative z-10 text-[12vw] font-serif italic tracking-tighter mix-blend-difference">
+          Monument
+        </h1>
       </section>
 
-      {/* ASMR Grid Section */}
-      <div className="px-8 py-32 space-y-48 max-w-6xl mx-auto">
-        {sections.map((s, i) => (
-          <motion.section 
-            key={i}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center"
-          >
-            <div className={i % 2 === 0 ? "order-1" : "order-1 md:order-2"}>
-              <span className="text-blue-500 font-mono text-[10px] tracking-widest">{s.subtitle}</span>
-              <h2 className="text-5xl font-serif italic mt-4 mb-8" style={{ fontFamily: 'Georgia, serif' }}>{s.title}</h2>
-              <div className="w-16 h-[1px] bg-white/10 mb-8" />
-              <p className="text-sm text-white/40 leading-relaxed font-light tracking-wide">
-                Digital ASMR exploration. A study in abstract motion, focusing on the intersection of light, shadow, and fluid mechanics.
+      {/* 2. THE IMMERSIVE SCROLL CONTENT */}
+      <div className="relative z-20">
+        {stockVideos.map((url, i) => (
+          <section key={i} className="h-screen flex items-center justify-around px-10">
+            <motion.div 
+              initial={{ opacity: 0, x: i % 2 === 0 ? -100 : 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="max-w-md"
+            >
+              <h2 className="text-4xl font-serif mb-4 italic">Phase 0{i+1}</h2>
+              <p className="text-zinc-500 text-sm tracking-widest leading-loose">
+                IMMERSED IN MOTION. NO BORDERS. NO BOXES. 
+                SENSORY EXPERIMENT {i+1}.
               </p>
+            </motion.div>
+
+            {/* This is the "Floating PNG" effect video */}
+            <div className="w-1/2 h-[60vh] relative">
+              <video 
+                src={url} 
+                autoPlay loop muted playsInline 
+                className="w-full h-full object-contain mix-blend-screen grayscale contrast-125"
+              />
             </div>
-            
-            <div className={`relative aspect-[3/4] bg-zinc-900/50 overflow-hidden rounded-sm ${i % 2 === 0 ? "order-2" : "order-2 md:order-1"}`}>
-               <video 
-                 src={s.video} 
-                 autoPlay loop muted playsInline preload="metadata"
-                 className="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-1000" 
-               />
-            </div>
-          </motion.section>
+          </section>
         ))}
       </div>
 
-      {/* Footer */}
-      <footer className="py-40 border-t border-white/5 text-center">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.2 }}
-          className="text-[10px] uppercase tracking-[1em]"
-        >
-          End of Sandbox
-        </motion.div>
+      <footer className="h-screen flex items-center justify-center bg-zinc-950">
+        <p className="opacity-20 tracking-[2em] uppercase text-[10px]">End Sandbox</p>
       </footer>
     </main>
   );
